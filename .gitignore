@@ -1,0 +1,62 @@
+# Windows system files
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.bak
+
+# JetBrains Rider
+.idea/
+*.iws
+*.iml
+*.ipr
+*.DotSettings.*
+!*.DotSettings.shared
+
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# .NET / ASP.NET Core build artifacts
+bin/
+obj/
+out/
+Debug/
+Release/
+publish/
+
+# Logs and caches
+*.log
+*.tlog
+*.cache
+*.tmp
+
+# Local secrets and certificates
+secrets.json
+appsettings.Development.json
+*.pfx
+
+# NuGet packages
+*.nupkg
+*.snupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+TestResult.xml
+
+# Docker
+.docker/
+**/docker-compose.override.yml
+
+# PostgreSQL local dumps
+*.sql
+*.dump
