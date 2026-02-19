@@ -21,8 +21,11 @@ public class User
     public User(string login, string passwordHash, UserRole role)
     {
         Id = Guid.NewGuid();
+        
         Login = login ?? throw new ArgumentNullException(nameof(login));
+        
         PasswordHash = passwordHash ?? throw new ArgumentNullException(nameof(passwordHash));
+        
         Role = role;
     }
 }

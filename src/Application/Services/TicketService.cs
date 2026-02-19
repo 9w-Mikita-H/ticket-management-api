@@ -39,19 +39,17 @@ public class TicketService : ITicketService
         {
             var q = filter.SearchQuery.ToLower();
 
-            query = query.Where(t =>
-                t.Title.ToLower().Contains(q) ||
-                t.Author.Login.ToLower().Contains(q));
+            query = query.Where(t => t.Title.ToLower().Contains(q) || t.Author.Login.ToLower().Contains(q));
         }
 
         query = filter.SortBy switch
         {
-            "UpdatedAt" =>
+            "LastActivityAt" =>
                 filter.SortDirection == "desc"
                     ? query.OrderByDescending(t => t.LastActivityAt)
                     : query.OrderBy(t => t.LastActivityAt),
 
-            _ =>
+            "CreatedAt" =>
                 filter.SortDirection == "desc"
                     ? query.OrderByDescending(t => t.CreatedAt)
                     : query.OrderBy(t => t.CreatedAt)
@@ -104,8 +102,7 @@ public class TicketService : ITicketService
             CreatedAt = ticket.CreatedAt,
             LastActivityAt = ticket.LastActivityAt,
             AuthorLogin = ticket.Author.Login,
-            Comments = ticket.Comments
-                .OrderBy(c => c.CreatedAt)
+            Comments = ticket.Comments.OrderBy(c => c.CreatedAt)
                 .Select(c => new CommentResponseDto
                 {
                     Id = c.Id,
@@ -190,34 +187,36 @@ public class TicketService : ITicketService
         TicketStatus newStatus,
         CancellationToken ct = default)
     {
-        var ticket = await _tickets.GetByIdAsync(ticketId, ct) 
+        var ticket = await _tickets.GetByIdAsync(ticketId, ct)
                      ?? throw new InvalidOperationException();
 
-        if (role == UserRole.User)
+        switch (role)
         {
-            if (ticket.AuthorId != currentUserId)
-                throw new UnauthorizedAccessException();
+            case UserRole.User:
+                if (ticket.AuthorId != currentUserId || newStatus != TicketStatus.Closed)
+                    throw new UnauthorizedAccessException();
 
-            if (newStatus != TicketStatus.Closed)
-                throw new UnauthorizedAccessException();
+                if (ticket.Status is not (TicketStatus.Open or TicketStatus.Resolved))
+                    throw new InvalidOperationException();
+                break;
+            
+            case UserRole.Agent:
+                var allowed = (ticket.Status, newStatus) switch
+                {
+                    (TicketStatus.Open, TicketStatus.InProgress) => true,
+                    (TicketStatus.InProgress, TicketStatus.Resolved) => true,
+                    (TicketStatus.InProgress, TicketStatus.Open) => true,
+                    (TicketStatus.Resolved, TicketStatus.InProgress) => true,
+                    (TicketStatus.Resolved, TicketStatus.Closed) => true,
+                    _ => false
+                };
 
-            if (ticket.Status is not (TicketStatus.Open or TicketStatus.Resolved))
-                throw new InvalidOperationException();
-        }
-        else if (role == UserRole.Agent)
-        {
-            var allowed = (ticket.Status, newStatus) switch
-            {
-                (TicketStatus.Open, TicketStatus.InProgress) => true,
-                (TicketStatus.InProgress, TicketStatus.Resolved) => true,
-                (TicketStatus.InProgress, TicketStatus.Open) => true,
-                (TicketStatus.Resolved, TicketStatus.InProgress) => true,
-                (TicketStatus.Resolved, TicketStatus.Closed) => true,
-                _ => false
-            };
-
-            if (!allowed)
-                throw new InvalidOperationException();
+                if (!allowed)
+                    throw new InvalidOperationException();
+                break;
+            
+            default:
+                throw new ArgumentOutOfRangeException(nameof(role));
         }
 
         ticket.Status = newStatus;

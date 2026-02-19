@@ -15,8 +15,7 @@ public class TicketRepository : ITicketRepository
 
     public IQueryable<Ticket> Query()
     {
-        return _dbContext.Tickets
-            .AsQueryable();
+        return _dbContext.Tickets.AsQueryable();
     }
 
     public async Task<Ticket?> GetByIdAsync(Guid ticketId, CancellationToken cancellationToken = default)
@@ -35,7 +34,6 @@ public class TicketRepository : ITicketRepository
 
     public async Task<bool> ExistsAsync(Guid ticketId, CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Tickets
-            .AnyAsync(t => t.Id == ticketId, cancellationToken);
+        return await _dbContext.Tickets.AnyAsync(t => t.Id == ticketId, cancellationToken);
     }
 }

@@ -26,9 +26,7 @@ public class AuthService : IAuthService
         _jwtProvider = jwtProvider;
     }
 
-    public async Task<AuthResponseDto> RegisterAsync(
-        RegisterRequestDto dto,
-        CancellationToken cancellationToken = default)
+    public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto dto, CancellationToken cancellationToken = default)
     {
         if (await _users.ExistsByLoginAsync(dto.Login, cancellationToken))
             throw new InvalidOperationException("Login already exists.");
@@ -49,9 +47,7 @@ public class AuthService : IAuthService
         };
     }
 
-    public async Task<AuthResponseDto> LoginAsync(
-        LoginRequestDto dto,
-        CancellationToken cancellationToken = default)
+    public async Task<AuthResponseDto> LoginAsync(LoginRequestDto dto, CancellationToken cancellationToken = default)
     {
         var user = await _users.GetByLoginAsync(dto.Login, cancellationToken)
                    ?? throw new UnauthorizedAccessException();
