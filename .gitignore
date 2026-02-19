@@ -12,7 +12,6 @@ $RECYCLE.BIN/
 *.DotSettings.*
 !*.DotSettings.shared
 
-
 # VS Code
 .vscode/
 !.vscode/settings.json
@@ -43,8 +42,6 @@ appsettings.Development.json
 *.nupkg
 *.snupkg
 packages/
-project.lock.json
-project.fragment.lock.json
 
 # Test results
 TestResults/
@@ -60,3 +57,9 @@ TestResult.xml
 # PostgreSQL local dumps
 *.sql
 *.dump
+
+# SQLite local stuff
+*.db
+*.db-shm
+*.db-wal
+*.sqlite

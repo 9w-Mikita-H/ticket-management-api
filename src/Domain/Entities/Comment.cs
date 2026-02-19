@@ -30,18 +30,4 @@ public class Comment
         
         CreatedAt = DateTime.UtcNow;
     }
-    
-    /*
-     Application:
-     
-     var comment = new Comment(content, ticket, user);
-
-     dbContext.Comments.Add(comment);
-
-     ticket.LastActivityAt = DateTime.UtcNow;
-
-     await dbContext.SaveChangesAsync();
-     
-     Делать in-memory синхронизацию не нужно.
-    */
 }
