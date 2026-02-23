@@ -1,24 +1,11 @@
 using Application.DTOs.Comments;
-using Application.DTOs.Common;
 using Application.DTOs.Tickets;
 using Domain.Enums;
 
 namespace Application.Interfaces.Services;
 
-public interface ITicketService
+public interface ITicketCommandService
 {
-    Task<PagedResult<TicketListItemDto>> GetAsync(
-        Guid currentUserId,
-        UserRole currentUserRole,
-        TicketFilterDto filter,
-        CancellationToken cancellationToken = default);
-
-    Task<TicketDetailsDto?> GetByIdAsync(
-        Guid ticketId,
-        Guid currentUserId,
-        UserRole currentUserRole,
-        CancellationToken cancellationToken = default);
-
     Task<Guid> CreateAsync(
         Guid currentUserId,
         CreateTicketDto dto,
@@ -29,7 +16,7 @@ public interface ITicketService
         Guid currentUserId,
         UpdateTicketDto dto,
         CancellationToken cancellationToken = default);
-
+    
     Task ChangeStatusAsync(
         Guid ticketId,
         Guid currentUserId,

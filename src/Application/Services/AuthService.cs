@@ -2,6 +2,7 @@ using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
 using Application.DTOs.Auth;
 using Application.Interfaces.Security;
+using Application.Mappings;
 using Domain.Entities;
 using Domain.Enums;
 
@@ -14,11 +15,7 @@ public class AuthService : IAuthService
     private readonly IPasswordHasher _passwordHasher;
     private readonly IJwtProvider _jwtProvider;
 
-    public AuthService(
-        IUserRepository users,
-        IUnitOfWork uow,
-        IPasswordHasher passwordHasher,
-        IJwtProvider jwtProvider)
+    public AuthService(IUserRepository users, IUnitOfWork uow, IPasswordHasher passwordHasher, IJwtProvider jwtProvider)
     {
         _users = users;
         _uow = uow;
@@ -40,11 +37,7 @@ public class AuthService : IAuthService
 
         var token = _jwtProvider.Generate(user);
 
-        return new AuthResponseDto
-        {
-            AccessToken = token.Token,
-            ExpiresAt = token.ExpiresAt
-        };
+        return token.ToAuthResponseDto();
     }
 
     public async Task<AuthResponseDto> LoginAsync(LoginRequestDto dto, CancellationToken cancellationToken = default)
@@ -59,10 +52,6 @@ public class AuthService : IAuthService
 
         var token = _jwtProvider.Generate(user);
 
-        return new AuthResponseDto
-        {
-            AccessToken = token.Token,
-            ExpiresAt = token.ExpiresAt
-        };
+        return token.ToAuthResponseDto();
     }
 }

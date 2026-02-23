@@ -2,7 +2,7 @@ using Domain.Enums;
 
 namespace Application.DTOs.Tickets;
 
-public record TicketListItemDto
+public record TicketSummaryDto
 {
     public Guid Id { get; init; }
     
