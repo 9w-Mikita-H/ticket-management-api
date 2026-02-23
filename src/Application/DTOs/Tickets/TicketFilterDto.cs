@@ -1,3 +1,4 @@
+using Application.Enums;
 using Domain.Enums;
 
 namespace Application.DTOs.Tickets;
@@ -11,6 +12,6 @@ public class TicketFilterDto
 
     public string? SearchQuery { get; init; }
 
-    public string? SortBy { get; init; }
-    public string? SortDirection { get; init; }
+    public TicketSortBy SortBy { get; init; } = TicketSortBy.CreatedAt;
+    public bool IsDescending { get; init; }
 }

@@ -41,16 +41,4 @@ public static class TicketMappings
             CreatedAt = comment.CreatedAt
         };
     }
-
-    public static TicketSummaryDto ToSummaryDto(this Ticket ticket)
-    {
-        return new TicketSummaryDto
-        {
-            Id = ticket.Id,
-            Title = ticket.Title,
-            Status = ticket.Status,
-            CreatedAt = ticket.CreatedAt,
-            LastActivityAt = ticket.LastActivityAt
-        };
-    }
 }

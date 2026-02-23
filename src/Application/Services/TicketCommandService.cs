@@ -15,7 +15,7 @@ public class TicketCommandService : ITicketCommandService
     private readonly IUserRepository _users;
     private readonly IUnitOfWork _uow;
 
-    public TicketCommandService(ITicketRepository tickets, ITicketDomainService ticketDomainService , IUserRepository users, IUnitOfWork uow)
+    public TicketCommandService(ITicketRepository tickets, ITicketDomainService ticketDomainService, IUserRepository users, IUnitOfWork uow)
     {
         _tickets = tickets;
         _ticketDomainService = ticketDomainService;

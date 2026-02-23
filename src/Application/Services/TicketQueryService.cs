@@ -1,24 +1,23 @@
-using Application.DTOs.Comments;
 using Application.DTOs.Common;
 using Application.DTOs.Tickets;
+using Application.Enums;
 using Application.Interfaces.Persistence;
 using Application.Interfaces.Services;
 using Application.Mappings;
 using Domain.Enums;
+using Domain.Services;
 
 namespace Application.Services;
 
 public class TicketQueryService : ITicketQueryService
 {
     private readonly ITicketRepository _tickets;
-    private readonly IUserRepository _users;
-    private readonly IUnitOfWork _uow;
+    private readonly ITicketDomainService _ticketDomainService;
 
-    public TicketQueryService(ITicketRepository tickets, IUserRepository users, IUnitOfWork uow)
+    public TicketQueryService(ITicketRepository tickets, ITicketDomainService ticketDomainService)
     {
         _tickets = tickets;
-        _users = users;
-        _uow = uow;
+        _ticketDomainService = ticketDomainService;
     }
 
     public async Task<PagedResult<TicketSummaryDto>> GetAsync(Guid currentUserId, UserRole role, TicketFilterDto filter, CancellationToken ct = default)
@@ -40,13 +39,13 @@ public class TicketQueryService : ITicketQueryService
 
         query = filter.SortBy switch
         {
-            "LastActivityAt" =>
-                filter.SortDirection == "desc"
+            TicketSortBy.LastActivityAt =>
+                filter.IsDescending
                     ? query.OrderByDescending(t => t.LastActivityAt)
                     : query.OrderBy(t => t.LastActivityAt),
 
             _ =>
-                filter.SortDirection == "desc"
+                filter.IsDescending
                     ? query.OrderByDescending(t => t.CreatedAt)
                     : query.OrderBy(t => t.CreatedAt)
         };
@@ -56,7 +55,14 @@ public class TicketQueryService : ITicketQueryService
         var items = query
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
-            .Select(t => t.ToSummaryDto())
+            .Select(t => new TicketSummaryDto
+            {
+                Id = t.Id,
+                Title = t.Title,
+                Status = t.Status,
+                CreatedAt = t.CreatedAt,
+                LastActivityAt = t.LastActivityAt
+            })
             .ToList();
 
         return new PagedResult<TicketSummaryDto>
@@ -75,8 +81,7 @@ public class TicketQueryService : ITicketQueryService
         if (ticket is null)
             return null;
 
-        if (role == UserRole.User && ticket.AuthorId != currentUserId)
-            throw new UnauthorizedAccessException();
+        _ticketDomainService.EnsureCanView(ticket, currentUserId, role);
 
         return ticket.ToDetailsDto();
     }

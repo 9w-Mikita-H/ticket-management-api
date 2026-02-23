@@ -63,3 +63,6 @@ TestResult.xml
 *.db-shm
 *.db-wal
 *.sqlite
+
+# IDE DotSettings
+src/Api/Properties/

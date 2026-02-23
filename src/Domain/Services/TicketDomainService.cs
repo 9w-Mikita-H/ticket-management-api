@@ -5,6 +5,12 @@ namespace Domain.Services;
 
 public class TicketDomainService : ITicketDomainService
 {
+    public void EnsureCanView(Ticket ticket, Guid currentUserId, UserRole role)
+    {
+        if (role == UserRole.User && ticket.AuthorId != currentUserId)
+            throw new UnauthorizedAccessException();
+    }
+
     public void UpdateContent(Ticket ticket, Guid currentUserId, string title, string description)
     {
         if (ticket.AuthorId != currentUserId)
@@ -61,8 +67,7 @@ public class TicketDomainService : ITicketDomainService
         if (ticket.Status == TicketStatus.Closed)
             throw new InvalidOperationException();
 
-        if (author.Role == UserRole.User && ticket.AuthorId != author.Id)
-            throw new UnauthorizedAccessException();
+        EnsureCanView(ticket, author.Id, author.Role);
         
         ticket.Comments.Add(new Comment(content, ticket, author));
         ticket.LastActivityAt = DateTime.UtcNow;
