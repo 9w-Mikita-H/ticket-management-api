@@ -64,5 +64,5 @@ TestResult.xml
 *.db-wal
 *.sqlite
 
-# IDE DotSettings
+# IDE Settings
 src/Api/Properties/
