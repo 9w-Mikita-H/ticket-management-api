@@ -23,26 +23,26 @@ public class AuthService : IAuthService
         _jwtProvider = jwtProvider;
     }
 
-    public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto dto, CancellationToken cancellationToken = default)
+    public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto dto, CancellationToken ct = default)
     {
-        if (await _users.ExistsByLoginAsync(dto.Login, cancellationToken))
+        if (await _users.ExistsByLoginAsync(dto.Login, ct))
             throw new InvalidOperationException("Login already exists.");
 
         var hash = _passwordHasher.Hash(dto.Password);
 
         var user = new User(dto.Login, hash, UserRole.User);
 
-        await _users.AddAsync(user, cancellationToken);
-        await _uow.SaveChangesAsync(cancellationToken);
+        await _users.AddAsync(user, ct);
+        await _uow.SaveChangesAsync(ct);
 
         var token = _jwtProvider.Generate(user);
 
         return token.ToAuthResponseDto();
     }
 
-    public async Task<AuthResponseDto> LoginAsync(LoginRequestDto dto, CancellationToken cancellationToken = default)
+    public async Task<AuthResponseDto> LoginAsync(LoginRequestDto dto, CancellationToken ct = default)
     {
-        var user = await _users.GetByLoginAsync(dto.Login, cancellationToken)
+        var user = await _users.GetByLoginAsync(dto.Login, ct, asNoTracking: true)
                    ?? throw new UnauthorizedAccessException();
 
         var valid = _passwordHasher.Verify(dto.Password, user.PasswordHash);

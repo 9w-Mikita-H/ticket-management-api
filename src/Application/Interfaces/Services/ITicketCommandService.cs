@@ -9,25 +9,25 @@ public interface ITicketCommandService
     Task<Guid> CreateAsync(
         Guid currentUserId,
         CreateTicketDto dto,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 
     Task UpdateAsync(
         Guid ticketId,
         Guid currentUserId,
         UpdateTicketDto dto,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
     
     Task ChangeStatusAsync(
         Guid ticketId,
         Guid currentUserId,
         UserRole currentUserRole,
         TicketStatus newStatus,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
     
     Task AddCommentAsync(
         Guid ticketId,
         Guid currentUserId,
         UserRole currentUserRole,
         AddCommentDto dto,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 }

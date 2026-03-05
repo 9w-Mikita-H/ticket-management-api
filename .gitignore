@@ -36,6 +36,7 @@ publish/
 # Local secrets and certificates
 secrets.json
 appsettings.Development.json
+launchSettings.json
 *.pfx
 
 # NuGet packages
@@ -63,6 +64,3 @@ TestResult.xml
 *.db-shm
 *.db-wal
 *.sqlite
-
-# IDE Settings
-src/Api/Properties/

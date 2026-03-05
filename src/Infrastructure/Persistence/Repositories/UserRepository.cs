@@ -13,23 +13,33 @@ public class UserRepository : IUserRepository
         _dbContext = dbContext;
     }
 
-    public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<User?> GetByIdAsync(Guid id, CancellationToken ct = default, bool asNoTracking = false)
     {
-        return await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+        IQueryable<User> query = _dbContext.Users;
+
+        if (asNoTracking)
+            query = query.AsNoTracking();
+
+        return await query.FirstOrDefaultAsync(u => u.Id == id, ct);
     }
 
-    public async Task<User?> GetByLoginAsync(string login, CancellationToken cancellationToken = default)
+    public async Task<User?> GetByLoginAsync(string login, CancellationToken ct = default, bool asNoTracking = false)
     {
-        return await _dbContext.Users.FirstOrDefaultAsync(u => u.Login == login, cancellationToken);
+        IQueryable<User> query = _dbContext.Users;
+
+        if (asNoTracking)
+            query = query.AsNoTracking();
+
+        return await query.FirstOrDefaultAsync(u => u.Login == login, ct);
     }
 
-    public async Task<bool> ExistsByLoginAsync(string login, CancellationToken cancellationToken = default)
+    public async Task<bool> ExistsByLoginAsync(string login, CancellationToken ct = default)
     {
-        return await _dbContext.Users.AnyAsync(u => u.Login == login, cancellationToken);
+        return await _dbContext.Users.AnyAsync(u => u.Login == login, ct);
     }
 
-    public async Task AddAsync(User user, CancellationToken cancellationToken = default)
+    public async Task AddAsync(User user, CancellationToken ct = default)
     {
-        await _dbContext.Users.AddAsync(user, cancellationToken);
+        await _dbContext.Users.AddAsync(user, ct);
     }
 }
